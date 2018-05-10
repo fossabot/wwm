@@ -28,7 +28,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.allergies || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.allergy}</dt>
                             {(item.critical === "true" || item.comment) && (
                                 <dd>
@@ -48,7 +48,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.immunizations || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.immunization}</dt>
                             {/* @TODO format date */}
                             {item.date && <dd>{item.date}</dd>}
@@ -64,7 +64,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.chronicDiseases || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.disease}</dt>
                             {/* @TODO format date */}
                             {item.date && <dd>{item.date}</dd>}
@@ -80,7 +80,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.injuries || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.injury}</dt>
                             {/* @TODO format date */}
                             {item.date && <dd>{item.date}</dd>}
@@ -96,7 +96,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.surgeries || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.injury}</dt>
                             {/* @TODO format date */}
                             {item.date && <dd>{item.date}</dd>}
@@ -112,7 +112,7 @@ let History = ({ match, patient }) => (
             <div className="values">
                 <dl>
                     {(patient.medications || []).map((item, i) => (
-                        <React.Fragment>
+                        <React.Fragment key={i}>
                             <dt>{item.medication}</dt>
                             {item.comment && <dd>{item.comment}</dd>}
                         </React.Fragment>

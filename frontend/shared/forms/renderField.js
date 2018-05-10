@@ -1,5 +1,7 @@
 import React from "react"
+import { connect } from "react-redux"
 import classnames from "classnames"
+import Select from "react-select"
 
 const renderInput = ({ input, optional, label, type, meta: { touched, error } }) => (
     <label>
@@ -48,6 +50,61 @@ const renderSelect = ({ input, pristine, label, options, meta: { touched, error 
         {touched && error && <div className="invalid-feedback">{error}</div>}
     </label>
 )
+
+// const CustomSelect = ({ value, options, input}) => (
+//     <Select.Async value={value} onChange={event => input.onChange(event) } isMulti closeMenuOnSelect={false} options = {options} styles={customStyles} />
+// )
+
+class renderReactSelect extends React.Component {
+    constructor(props) {
+        super(props)
+        this.onChange = this.onChange.bind(this)
+        // this.state = { value: "", fetchingInitialValue =  }
+        // if (this)
+    }
+
+    onChange(value) {
+        // this.setState({ value })
+        // this.props.input.onChange(value)
+        this.props.input.onChange(value)
+    }
+
+    render() {
+        const {
+            value,
+            input,
+            pristine,
+            label,
+            loadOptions,
+            meta: { touched, error }
+        } = this.props
+        // const selectValue =
+
+        console.log(input.value, input)
+
+        return (
+            <label>
+                {/* <Select.Async {...input} /> */}
+                <Select.Async value={input.value} multi={false} loadOptions={loadOptions} onChange={this.onChange} onSelectResetsInput={false} />
+                {/* <select value={{...input} className={classnames("form-control", { "is-invalid": touched && error, selected: input.value !== "" })}>
+            <option value="" disabled>
+                {label}
+            </option>
+            {(options || []).map(option => (
+                <option value={option.value} key={option.value}>
+                    {option.label}
+                </option>
+            ))}
+        </select> */}
+
+                <span>{label}</span>
+                {touched && error && <div className="invalid-feedback">{error}</div>}
+            </label>
+        )
+    }
+}
+
+// renderReactSelect = connect(state => {})
 
 const renderHorizontalSelect = ({ input, pristine, label, unit, options, meta: { touched, error } }) => (
     <div className="form-row">
@@ -146,4 +203,14 @@ const renderHabitFields = fields => (
     </div>
 )
 
-export { renderInput, renderHorizontalInput, renderSelect, renderHorizontalSelect, renderRadio, renderHorizontalRadio, renderTextarea, renderHabitFields }
+export {
+    renderInput,
+    renderHorizontalInput,
+    renderSelect,
+    renderReactSelect,
+    renderHorizontalSelect,
+    renderRadio,
+    renderHorizontalRadio,
+    renderTextarea,
+    renderHabitFields
+}

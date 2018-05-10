@@ -6,6 +6,8 @@ import { getToken } from "./authentication"
 export const LOADING = "codes/LOADING"
 export const LOADED = "codes/LOADED"
 export const LOAD = "codes/LOAD"
+export const SEARCH = "codes/SEARCH"
+export const SEARCHED = "codes/SEARCHED"
 export const FAILED = "codes/FAILED"
 
 const initialState = {
@@ -38,6 +40,15 @@ export default (state = initialState, action) => {
                 }
                 break
 
+            case SEARCH:
+                draft.searching = true
+                break
+
+            case SEARCHED:
+                draft.searching = false
+                draft.searchResults = action.data
+                break
+
             case FAILED:
                 draft.fetching = draft.fetching.filter(cat => cat !== action.category)
 
@@ -63,6 +74,31 @@ export const getCodesAsOptions = category => {
     return (dispatch, getState) => {
         return (getState().codes.cache[category] || []).map(code => ({ label: code.title, value: code.id }))
     }
+}
+
+export const searchCodes = (category, query, parentId) => dispatch => {
+    dispatch({ type: SEARCH })
+    const locale = read(LOCALE)
+    const url = `${read(BASE_URL)}/discovery/codes/${category}?locale=${locale}`
+    return fetch(url, {
+        method: "GET",
+        headers: {
+            Authorization: dispatch(getToken()),
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => Promise.all([response.ok, response.json()]))
+        .then(([ok, data]) => {
+            if (!ok) {
+                throw new Error("Failed to load codes")
+            }
+            dispatch({ type: SEARCHED, data })
+            return data
+        })
+        .catch(ex => {
+            dispatch(open("Failed to fetch codes :: " + ex.message, COLOR_DANGER))
+            dispatch({ type: FAILED, category })
+        })
 }
 
 export const loadCategories = (...categories) => {

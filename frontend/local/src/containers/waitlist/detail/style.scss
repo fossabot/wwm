@@ -129,3 +129,24 @@
         }
     }
 }
+
+.add-diagnosis {
+    h3 {
+        font-size: 24px;
+        margin: 40px 0 20px 0;
+    }
+
+    .Select-multi-value-wrapper,
+    .Select-arrow-zone,
+    .Select-arrow,
+    .Select-value-label,
+    .Select-clear-zone {
+        position: initial;
+        top: 0;
+    }
+
+    .Select-menu-outer {
+        z-index: 1000;
+    }
+}
+
