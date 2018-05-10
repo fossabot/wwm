@@ -4,6 +4,7 @@ import { Field, FieldArray, reduxForm } from "redux-form"
 import { get } from "lodash"
 
 import { searchCodes } from "shared/modules/codes"
+import { update as updateWaitlistItem } from "../../../modules/waitlist"
 import Modal from "shared/containers/modal"
 import Patient from "shared/containers/patient"
 import { renderInput, renderTextarea, renderReactSelect } from "shared/forms/renderField"
@@ -16,6 +17,7 @@ class AddDiagnosis extends React.Component {
     constructor(props) {
         super(props)
         this.fetchCodes = this.fetchCodes.bind(this)
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
     fetchCodes(input) {
@@ -26,11 +28,23 @@ class AddDiagnosis extends React.Component {
         return this.props.searchCodes("diagnosis", input).then(results => ({ options: results.map(el => ({ value: el.id, label: el.title })) }))
     }
 
+    onSubmit(formData) {
+        // convert diagnosis from object to string
+        formData.diagnosis = formData.diagnosis.value
+
+        // add it to waitlist item
+        let newItem = Object.assign({}, this.props.waitlistItem)
+        newItem.diagnoses = newItem.diagnoses || []
+        newItem.diagnoses.push(formData)
+
+        return this.props.updateWaitlistItem(this.props.match.params.waitlistID, newItem)
+    }
+
     render() {
-        const { history } = this.props
+        const { history, handleSubmit } = this.props
         return (
             <Modal>
-                <div className="add-diagnosis">
+                <form className="add-diagnosis" onSubmit={handleSubmit(this.onSubmit)}>
                     <div className="modal-header">
                         <Patient />
                         <h1>
@@ -42,21 +56,13 @@ class AddDiagnosis extends React.Component {
                     <div className="modal-body">
                         <div className="form-row">
                             <div className="form-group col-sm-12">
-                                <Field
-                                    name="diagnosis"
-                                    component={renderReactSelect}
-                                    label="Diagnosis"
-                                    // multiple={false}
-                                    // backspaceRemoves={false}
-                                    loadOptions={this.fetchCodes}
-                                    // options={[{ id: "etset", label: "Test" }, { id: "id", label: "label" }]}
-                                />
+                                <Field name="diagnosis" component={renderReactSelect} label="Diagnosis" loadOptions={this.fetchCodes} />
                             </div>
                         </div>
 
                         <div className="form-row">
                             <div className="form-group col-sm-12">
-                                <Field name="diagnosisDescription" component={renderTextarea} label="Description" />
+                                <Field name="comment" component={renderTextarea} label="Description" />
                             </div>
                         </div>
 
@@ -81,7 +87,7 @@ class AddDiagnosis extends React.Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </Modal>
         )
     }
@@ -94,13 +100,14 @@ AddDiagnosis = reduxForm({
 AddDiagnosis = connect(
     state => ({
         waitlistItem: state.waitlist.item,
-        // initialState: get(state, "waitlist.item.diagnosis", { diagnosis: { id: "id", label: "label" } }),
-        initialValues: get(state, "waitlist.item.diagnosis", { diagnosis: { id: "id", label: "label" } }),
+        waitlistItems: state.waitlist.items,
+        initialValues: get(state, "waitlist.item.diagnosis", {}),
         searchingCodes: state.codes.searching,
         searchingResults: state.codes.searchResults
     }),
     {
-        searchCodes
+        searchCodes,
+        updateWaitlistItem
     }
 )(AddDiagnosis)
 
